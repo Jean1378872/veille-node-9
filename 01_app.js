@@ -15,24 +15,9 @@ app.use(cookieParser())
 // avec la méthode «post»
 // dans notre fichier .ejs
 // Notre code JavaScript pour effectuer un transfert AJAX
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+const xhr = new XMLHttpRequest();
 
-let elmBouton = document.getElementById('testAJAX')
-elmBouton.addEventListener('click', ()=>{
-console.log('ok')
-xhr = new XMLHttpRequest();
-xhr.open('POST', "testajax", true);
-data = {
-"nom" : "AAAA",
-"prenom" : "BBBB",
-"telephone" : "CCCC",
-"_id" : "2114322222542542345"
-}
-console.log(data)
-sData = JSON.stringify(data);
-xhr.setRequestHeader('Content-type', 'application/json');
-xhr.send(sData);
-xhr.addEventListener("readystatechange", traiterRequest, false);
-})
 
 app.use(express.static('public'));
 
@@ -138,7 +123,6 @@ app.post('/ajax_modifier', (req,res) => {
 })
 
 
-xhr = new XMLHttpRequest();
 xhr.open('POST', "modifier", true);
 data = { 
  "nom" : elmLigneDiv[0].innerHTML,
