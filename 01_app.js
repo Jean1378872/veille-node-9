@@ -9,13 +9,30 @@ app.use(bodyParser.urlencoded({extended: true}));
 /* on associe le moteur de vue au module «ejs» */
 const cookieParser = require('cookie-parser');
 app.use(cookieParser())
- 
-//app.get('/', function(req, res) {
-/* pour extraire l'ensemble des cookies */
- //console.log('Cookies: ', req.cookies)
-/* Pour récupérer la valeur d'un cookie spécifique « langueChoisie » */
-// console.log('Cookies: ', req.cookies.langueChoisie)
-//})
+
+// Dans notre application serveur
+// le module body-parser permettra de récupérer les données transmis 
+// avec la méthode «post»
+// dans notre fichier .ejs
+// Notre code JavaScript pour effectuer un transfert AJAX
+
+let elmBouton = document.getElementById('testAJAX')
+elmBouton.addEventListener('click', ()=>{
+console.log('ok')
+xhr = new XMLHttpRequest();
+xhr.open('POST', "testajax", true);
+data = {
+"nom" : "AAAA",
+"prenom" : "BBBB",
+"telephone" : "CCCC",
+"_id" : "2114322222542542345"
+}
+console.log(data)
+sData = JSON.stringify(data);
+xhr.setRequestHeader('Content-type', 'application/json');
+xhr.send(sData);
+xhr.addEventListener("readystatechange", traiterRequest, false);
+})
 
 app.use(express.static('public'));
 
@@ -106,6 +123,33 @@ req.body._id = 	ObjectID(req.body._id)
 	 })
 })
 
+// Dans notre application serveur
+// Une nouvelle route pour traiter la requête AJAX
+
+app.post('/ajax_modifier', (req,res) => {
+   req.body._id = ObjectID(req.body._id)
+
+   db.collection('adresse').save(req.body, (err, result) => {
+   if (err) return console.log(err)
+       console.log('sauvegarder dans la BD')
+   res.send(JSON.stringify(req.body));
+   // res.status(204)
+   })
+})
+
+
+xhr = new XMLHttpRequest();
+xhr.open('POST', "modifier", true);
+data = { 
+ "nom" : elmLigneDiv[0].innerHTML,
+ "prenom" : elmLigneDiv[1].innerHTML,
+ "telephone" : elmLigneDiv[2].innerHTML,
+ "_id" : elmLigneDiv[3].innerHTML 
+}
+sData = JSON.stringify(data);
+xhr.setRequestHeader('Content-type', 'application/json');
+xhr.send(sData);
+xhr.addEventListener("readystatechange", traiterRequest, false);
 
 ////////////////////////////////////////  Route /detruire
 app.get('/detruire/:id', (req, res) => {
@@ -121,7 +165,21 @@ if (err) return console.log(err)
  })
 })
 
+function traiterRequest(e)
+{
+ console.log("xhr.readyState = " + xhr.readyState)
+ console.log("xhr.status = " + xhr.status)
+ if(xhr.readyState == 4 && xhr.status == 200)
+ {
+ console.log('ajax fonctionne')
+ var response = JSON.parse(xhr.responseText);
+ console.log(response)
+ console.log("response._id = " + response._id)
+ console.log(xhr.responseText);
 
+// elmLigne.style.backgroundColor = "#0f0"
+ }
+}
 ///////////////////////////////////////////////////////////   Route /trier
 app.get('/trier/:cle/:ordre', (req, res) => {
 
